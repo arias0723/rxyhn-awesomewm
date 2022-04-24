@@ -5,7 +5,8 @@
 --      undone (integer)
 local awful = require("awful")
 
-local todo_file_path = os.getenv("TODO_PATH")
+--local todo_file_path = os.getenv("TODO_PATH")
+local todo_file_path = "/home/ghost/todo.txt"
 
 -- Subscribe to todo changes
 -- Requires inotify-tools

@@ -30,7 +30,7 @@ awful.screen.connect_for_each_screen(function(s)
 	central_panel = wibox({
 		type = "dock",
 		screen = s,
-		height = dpi(670),
+		height = dpi(s.geometry.height - 105),
 		width = dpi(620),
 		bg = beautiful.transparent,
 		ontop = true,
@@ -41,14 +41,16 @@ awful.screen.connect_for_each_screen(function(s)
 
 	-- Rubato
 	local slide = rubato.timed({
-		pos = dpi(-s.geometry.height),
+		pos = dpi(s.geometry.width + central_panel.width),
 		rate = 60,
 		duration = 0.25,
 		intro = 0.125,
 		easing = rubato.quadratic,
 		awestore_compat = true,
 		subscribed = function(pos)
-			central_panel.y = pos
+			--central_panel.x = -pos + s.geometry.width - central_panel.width + 60
+			central_panel.x = pos
+
 		end,
 	})
 
@@ -63,14 +65,14 @@ awful.screen.connect_for_each_screen(function(s)
 	-- Make toogle button
 	local central_panel_show = function()
 		central_panel.visible = true
-		slide:set(dpi(80))
+		slide:set(dpi(s.geometry.width - central_panel.width - 20))
 		central_panel_status = false
 
 		central_panel:emit_signal("opened")
 	end
 
 	local central_panel_hide = function()
-		slide:set(-s.geometry.height)
+		slide:set(s.geometry.width + central_panel.width)
 		central_panel_status = true
 
 		central_panel:emit_signal("closed")

@@ -138,7 +138,7 @@ end
 -- Markup helper
 
 function helpers.colorize_text(txt, fg)
-	return "<span foreground='" .. fg .. "'>" .. txt .. "</span>"
+	return "<span foreground='" .. (fg or "") .. "'>" .. txt .. "</span>"
 end
 
 function helpers.client_menu_toggle()
