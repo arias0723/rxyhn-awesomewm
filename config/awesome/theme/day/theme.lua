@@ -66,6 +66,9 @@ theme.lighter_bg = color_palette.black3
 theme.dashboard_fg = color_palette.gray2
 theme.transparent = "#00000000"
 
+-- Wallpaper
+theme.wallpaper = gfs.get_configuration_dir() .. "theme/assets/day.jpg"
+
 -- PFP
 theme.pfp = gears.surface.load_uncached(gfs.get_configuration_dir() .. "theme/assets/pfp.png")
 
@@ -141,6 +144,12 @@ theme.tooltip_gap = dpi(10)
 theme.tooltip_box_margin = dpi(10)
 theme.tooltip_border_radius = theme.border_radius
 theme.tooltip_box_border_radius = theme.widget_radius
+
+-- Battery Indicator
+theme.battery_happy_color = theme.xcolor2
+theme.battery_sad_color = theme.xcolor1
+theme.battery_ok_color = theme.xcolor3
+theme.battery_charging_color = theme.accent
 
 -- Edge snap
 theme.snap_bg = theme.xcolor8

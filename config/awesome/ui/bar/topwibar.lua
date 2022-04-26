@@ -103,7 +103,7 @@ awful.screen.connect_for_each_screen(function(s)
 
 	-- battery
 	local charge_icon = wibox.widget({
-		markup = helpers.colorize_text("󱐋", beautiful.wibar_bg),
+		markup = helpers.colorize_text("󱐋", beautiful.xbackground .. "80"),
 		align = "center",
 		valign = "center",
 		font = beautiful.icon_font_name .. "16",
@@ -112,8 +112,8 @@ awful.screen.connect_for_each_screen(function(s)
 	})
 
 	local batt = wibox.widget({
-		color = beautiful.xcolor2,
-		background_color = beautiful.xcolor2 .. "55",
+		color = beautiful.battery_happy_color,
+		background_color = beautiful.battery_happy_color .. "55",
 		bar_shape = function(cr, width, height)
 			gears.shape.rounded_rect(cr, width, height, dpi(5))
 		end,
@@ -150,13 +150,13 @@ awful.screen.connect_for_each_screen(function(s)
 		local color
 
 		if charge_icon.visible then
-			color = beautiful.xcolor6
+			color = beautiful.battery_charging_color
 		elseif value <= batt_critical_value then
-			color = beautiful.xcolor1
+			color = beautiful.battery_sad_color
 		elseif value <= batt_low_value then
-			color = beautiful.xcolor3
+			color = beautiful.battery_ok_color
 		else
-			color = beautiful.xcolor2
+			color = beautiful.battery_happy_color
 		end
 
 		batt.color = color
@@ -167,16 +167,16 @@ awful.screen.connect_for_each_screen(function(s)
 		local color
 		if state then
 			charge_icon.visible = true
-			color = beautiful.xcolor6
+			color = beautiful.battery_charging_color
 		elseif batt_last_value <= batt_critical_value then
 			charge_icon.visible = false
-			color = beautiful.xcolor1
+			color = beautiful.battery_sad_color
 		elseif batt_last_value <= batt_low_value then
 			charge_icon.visible = false
-			color = beautiful.xcolor3
+			color = beautiful.battery_ok_color
 		else
 			charge_icon.visible = false
-			color = beautiful.xcolor2
+			color = beautiful.battery_happy_color
 		end
 
 		batt.color = color

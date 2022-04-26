@@ -4,7 +4,7 @@ dock.init({
 	screen = screen.primary,
 	height = dpi(50),
 	offset = dpi(5),
-	inner_shape = gears.shape.rounded_rect
+	inner_shape = gears.shape.rounded_rect,
 })
 
 require("module.bling")
