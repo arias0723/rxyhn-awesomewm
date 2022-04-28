@@ -10,10 +10,10 @@ local helpers = require("helpers")
 -- Stolen from Elena
 
 local stroke = beautiful.xbackground
-local happy_color = beautiful.xcolor2
-local sad_color = beautiful.xcolor1
-local ok_color = beautiful.xcolor3
-local charging_color = beautiful.xcolor6
+local happy_color = beautiful.battery_happy_color
+local sad_color = beautiful.battery_sad_color
+local ok_color = beautiful.battery_ok_color
+local charging_color = beautiful.battery_charging_color
 
 -- Not great not terrible
 local ok_threshold = 40

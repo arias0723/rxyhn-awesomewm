@@ -1,21 +1,97 @@
 local wibox = require("wibox")
 local beautiful = require("beautiful")
+local dpi = beautiful.xresources.apply_dpi
 local awful = require("awful")
 local gears = require("gears")
-
-local chel = require("module.dock_helpers").color
 local rubato = require("module.rubato")
 
-local dpi = beautiful.xresources.apply_dpi
+local function helpers()
+	local function overloaded()
+		local fns = {}
+		local mt = {}
+		local function oerror()
+			return error("Invalid argument types to overloaded function")
+		end
+		function mt:__call(...)
+			local arg = { ... }
+			local default = self.default
+			local signature = {}
+			for i, arg in ipairs({ ... }) do
+				signature[i] = type(arg)
+			end
+			signature = table.concat(signature, ",")
+			return (fns[signature] or self.default)(...)
+		end
+		function mt:__index(key)
+			local signature = {}
+			local function __newindex(self, key, value)
+				print(key, type(key), value, type(value))
+				signature[#signature + 1] = key
+				fns[table.concat(signature, ",")] = value
+				print("bind", table.concat(signature, ", "))
+			end
+			local function __index(self, key)
+				print("I", key, type(key))
+				signature[#signature + 1] = key
+				return setmetatable({}, { __index = __index, __newindex = __newindex })
+			end
+			return __index(self, key)
+		end
+		function mt:__newindex(key, value)
+			fns[key] = value
+		end
+		return setmetatable({ default = oerror }, mt)
+	end
+	--}}}
 
-local function init(s, h, o, shape, pinneds)
-	--local function init(args)
-	--[[	if args.screen == nil then return end
---	local s		= args.screen
---	local h		= args.height or dpi(50)
---	local o		= args.offset or 0
---	local shape	= args.shape or gears.shape.rectangle
---	local pinneds	= args.pinneds or nil]]
+	local function dec_hex(IN)
+		local B, K, OUT, I, D = 16, "0123456789ABCDEF", "", 0
+		while IN > 0 do
+			I = I + 1
+			IN, D = math.floor(IN / B), (IN % B) + 1
+			OUT = string.sub(K, D, D) .. OUT
+		end
+		return #OUT == 2 and OUT or "0" .. OUT
+	end
+
+	-- color helpers {{{
+	local color = {}
+
+	color.col_shift = overloaded()
+	color.col_shift.string.number = function(c, s)
+		local r, g, b, o = gears.color.parse_color(c)
+		return "#" .. dec_hex(r * 255 + s) .. dec_hex(g * 255 + s) .. dec_hex(b * 255 + s) .. dec_hex(o * 255)
+	end
+	color.col_shift.string.number.number.number = function(c, sr, sg, sb)
+		local r, g, b, o = gears.color.parse_color(c)
+		return "#" .. dec_hex(r * 255 + sr) .. dec_hex(g * 255 + sg) .. dec_hex(b * 255 + sb) .. dec_hex(o * 255)
+	end
+	color.col_shift.string.number.number.number.number = function(c, sr, sg, sb, so)
+		local r, g, b, o = gears.color.parse_color(c)
+		return "#" .. dec_hex(r * 255 + sr) .. dec_hex(g * 255 + sg) .. dec_hex(b * 255 + sb) .. dec_hex(o * 255 + so)
+	end
+
+	color.col_diff = function(f, s)
+		local fr, fg, fb, fo = gears.color.parse_color(f)
+		local sr, sg, sb, so = gears.color.parse_color(s)
+		return sr - fr, sg - fg, sb - fb, so - fo
+	end
+	--}}}
+	return {
+		color = color,
+	}
+end
+
+local chel = helpers().color
+
+--local function init(s, h, o, shape, pinneds)
+local function init(args)
+	local s = args.screen
+	local h = args.height or dpi(50)
+	local o = args.offset or 5
+	local inner_shape = args.inner_shape or gears.shape.rectangle
+	local outer_shape = args.outer_shape or gears.shape.rectangle
+	local pinneds = args.pinneds
 
 	-- tasklist creation {{{
 	local tasklist = awful.widget.tasklist({
@@ -29,9 +105,6 @@ local function init(s, h, o, shape, pinneds)
 		end, --sorts clients in order of their tags
 		filter = awful.widget.tasklist.filter.alltags,
 		forced_height = h,
-		style = {
-			shape = shape,
-		},
 		layout = {
 			layout = wibox.layout.fixed.horizontal,
 		},
@@ -56,7 +129,7 @@ local function init(s, h, o, shape, pinneds)
 							forced_width = h / 10,
 							id = "status",
 							bg = beautiful.dock_focused_bg,
-							shape = shape,
+							shape = inner_shape,
 							widget = wibox.container.background,
 						},
 						widget = wibox.container.place, --so the bg widget doesnt get stretched
@@ -66,7 +139,7 @@ local function init(s, h, o, shape, pinneds)
 				id = "bg",
 				widget = wibox.container.background,
 				bg = beautiful.dock_bg,
-				shape = shape,
+				shape = inner_shape,
 			},
 			widget = wibox.container.margin,
 			margins = h / 10,
@@ -119,7 +192,7 @@ local function init(s, h, o, shape, pinneds)
 						self:get_children_by_id("status")[1].forced_width = pos
 					end,
 				})
-				local bg_col = beautiful.dock_focused_bg
+				local bg_col = beautiful.xcolor0
 				local bg_focus_col = beautiful.dock_accent
 				local sh_r, sh_g, sh_b, _ = chel.col_diff(bg_col, bg_focus_col)
 
@@ -182,7 +255,7 @@ local function init(s, h, o, shape, pinneds)
 								forced_height = h / 10,
 								forced_width = h / 10,
 								id = "status",
-								shape = shape,
+								shape = inner_shape,
 								widget = wibox.container.background,
 							},
 							widget = wibox.container.place, --so the bg widget doesnt get stretched
@@ -191,7 +264,7 @@ local function init(s, h, o, shape, pinneds)
 						layout = wibox.layout.align.vertical,
 					},
 					widget = wibox.container.background,
-					shape = shape,
+					shape = inner_shape,
 					id = "bg",
 					buttons = awful.button({}, 1, function()
 						awful.spawn.easy_async(p.start_cmd)
@@ -237,24 +310,20 @@ local function init(s, h, o, shape, pinneds)
 		screen = s,
 		x = s.geometry.x + s.geometry.width / 2,
 		y = s.geometry.y + s.geometry.height - (h + o),
-		shape = shape,
+		shape = outer_shape,
 		widget = {
 			{
 				{
-					{
-						pinned_apps,
-						tasklist,
-						layout = wibox.layout.fixed.horizontal,
-					},
-					widget = wibox.container.margin,
-					margin = dpi(5),
+					pinned_apps,
+					tasklist,
+					layout = wibox.layout.fixed.horizontal,
 				},
-				widget = wibox.container.background,
-				bg = beautiful.dock_bg,
-				shape = shape,
+				widget = wibox.container.margin,
+				margin = dpi(5),
 			},
-			widget = wibox.container.place,
-			halign = "center",
+			widget = wibox.container.background,
+			bg = beautiful.dock_bg,
+			shape = inner_shape,
 		},
 	})
 
