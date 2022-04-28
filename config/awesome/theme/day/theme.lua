@@ -15,32 +15,32 @@ local helpers = require("helpers")
 -- Beautiful Day Theme
 --------------------------
 
--- colorscheme
+-- Catppuccin Dawn Colorscheme
 local color_palette = {
 	rosewater = "#DC907F",
 	flamingo = "#DD7878",
 	pink = "#EC83D0",
-	mauve = "#822FEE",
+	mauve = "#9247ED",
 	red = "#BB0D33",
 	maroon = "#E63B4A",
 	peach = "#FE640B",
 	yellow = "#E49320",
-	green = "#40A02B",
-	teal = "#179299",
+	green = "#53A947",
+	teal = "#23979F",
 	sky = "#04A5E5",
-	blue = "#1D65F5",
+	blue = "#3474EE",
 	sapphire = "#209FB5",
 	lavender = "#7287FD",
 	white = "#575279",
-	gray2 = "#6C6789",
-	gray1 = "#817C98",
-	gray0 = "#9691A8",
-	black0 = "#D0CDD4",
-	black1 = "#ECEBEB",
-	black2 = "#FBF8F4",
-	black3 = "#E1DCE0",
-	black4 = "#BEBAC6",
-	black5 = "#AAA6B7",
+	gray2 = "#696486",
+	gray1 = "#7B7794",
+	gray0 = "#8E89A1",
+	black5 = "#A09BAE",
+	black4 = "#B2AEBC",
+	black0 = "#C4C0C9",
+	black3 = "#D7D2D6",
+	black1 = "#E9E5E4",
+	black2 = "#FBF7F1",
 }
 
 theme.xbackground = color_palette.black2
@@ -65,6 +65,9 @@ theme.darker_bg = color_palette.black1
 theme.lighter_bg = color_palette.black3
 theme.dashboard_fg = color_palette.gray2
 theme.transparent = "#00000000"
+
+-- Wallpaper
+theme.wallpaper = gfs.get_configuration_dir() .. "theme/assets/day.jpg"
 
 -- PFP
 theme.pfp = gears.surface.load_uncached(gfs.get_configuration_dir() .. "theme/assets/pfp.png")
@@ -141,6 +144,12 @@ theme.tooltip_gap = dpi(10)
 theme.tooltip_box_margin = dpi(10)
 theme.tooltip_border_radius = theme.border_radius
 theme.tooltip_box_border_radius = theme.widget_radius
+
+-- Battery Indicator
+theme.battery_happy_color = theme.xcolor2
+theme.battery_sad_color = theme.xcolor1
+theme.battery_ok_color = theme.xcolor3
+theme.battery_charging_color = theme.accent
 
 -- Edge snap
 theme.snap_bg = theme.xcolor8
